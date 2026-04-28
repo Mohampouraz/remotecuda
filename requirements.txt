@@ -1,0 +1,31 @@
+# ============================================================
+#  RemoteCUDA - Core Dependencies
+#  Minimum requirements for production use
+# ============================================================
+
+# Deep Learning Framework
+torch>=1.10.0
+
+# Numerical Computing
+numpy>=1.20.0
+
+# ============================================================
+#  Optional Dependencies
+#  Uncomment for additional features
+# ============================================================
+
+# For development and testing
+# pytest>=6.0
+# pytest-cov>=2.12
+
+# For code formatting
+# black>=22.0
+# flake8>=4.0
+
+# For building and publishing
+# build>=0.7
+# twine>=3.4
+
+# For advanced compression (already uses zlib by default)
+# lz4>=3.1
+# zstandard>=0.15

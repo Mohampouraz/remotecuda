@@ -1,0 +1,44 @@
+# ============================================================
+#  RemoteCUDA - Source Distribution Manifest
+#  Specifies which files to include in the source distribution
+# ============================================================
+
+# Core package
+recursive-include remotecuda *.py
+recursive-include remotecuda *.typed
+
+# Documentation
+include README.md
+include LICENSE
+include requirements.txt
+
+# Assets
+include assets/*.svg
+include assets/*.png
+include assets/*.ico
+
+# Examples
+recursive-include examples *.py
+recursive-include examples *.ipynb
+recursive-include examples *.sh
+
+# Tests
+recursive-include tests *.py
+recursive-include tests *.json
+recursive-include tests *.yaml
+
+# Configuration
+include pyproject.toml
+include setup.cfg
+include .flake8
+
+# Exclusions
+exclude __pycache__
+exclude *.pyc
+exclude *.pyo
+exclude .DS_Store
+prune .git
+prune .github
+prune build
+prune dist
+prune *.egg-info
