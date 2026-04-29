@@ -62,3 +62,235 @@ remotecuda.init()
 
 # Your EXISTING code works — completely unchanged:
 model = MyModel().cuda()  # ← This now runs on the remote GPU!
+
+
+
+<div align="center">
+
+## Comparison with Alternatives
+
+</div>
+
+<table style="border-collapse: collapse; width: 100%; max-width: 100%; font-size: 0.9em; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;">
+  <thead>
+    <tr style="background-color: #161b22; border-bottom: 2px solid #30363d;">
+      <th style="padding: 14px 16px; text-align: left; color: #58a6ff; white-space: nowrap;">Feature</th>
+      <th style="padding: 14px 12px; text-align: center; color: #3fb950; white-space: nowrap;">
+        RemoteCUDA v3<br><span style="font-size: 0.75em; font-weight: normal; color: #8b949e;">(this project)</span>
+      </th>
+      <th style="padding: 14px 12px; text-align: center; color: #58a6ff; white-space: nowrap;">
+        <a href="https://github.com/chidorigi/chidori" style="color: #58a6ff; text-decoration: none;">Chidori GPU</a>
+      </th>
+      <th style="padding: 14px 12px; text-align: center; color: #58a6ff; white-space: nowrap;">
+        <a href="https://github.com/tensorlink/tensorlink" style="color: #58a6ff; text-decoration: none;">Tensorlink</a>
+      </th>
+      <th style="padding: 14px 12px; text-align: center; color: #8b949e; white-space: nowrap;">SSH+SCP</th>
+      <th style="padding: 14px 12px; text-align: center; color: #8b949e; white-space: nowrap;">VSCode Remote</th>
+    </tr>
+  </thead>
+  <tbody>
+    <!-- Zero client dependencies -->
+    <tr style="border-bottom: 1px solid #21262d; background-color: #0d1117;">
+      <td style="padding: 12px 16px; font-weight: 600; color: #e6edf3;">Zero client dependencies</td>
+      <td style="padding: 12px 12px; text-align: center; font-weight: 700; color: #3fb950; font-size: 1.2em;">&#10003;</td>
+      <td style="padding: 12px 12px; text-align: center; color: #8b949e;">needs PyTorch</td>
+      <td style="padding: 12px 12px; text-align: center; color: #8b949e;">needs CUDA</td>
+      <td style="padding: 12px 12px; text-align: center; font-weight: 700; color: #3fb950; font-size: 1.2em;">&#10003;</td>
+      <td style="padding: 12px 12px; text-align: center; color: #f85149; font-size: 1.2em;">&#10007;</td>
+    </tr>
+    
+    <!-- Pure Python client -->
+    <tr style="border-bottom: 1px solid #21262d; background-color: #0d1117;">
+      <td style="padding: 12px 16px; color: #e6edf3;">&nbsp;&nbsp;&#8627; Pure Python client</td>
+      <td style="padding: 12px 12px; text-align: center; font-weight: 700; color: #3fb950; font-size: 1.2em;">&#10003;</td>
+      <td style="padding: 12px 12px; text-align: center; color: #f85149; font-size: 1.2em;">&#10007;</td>
+      <td style="padding: 12px 12px; text-align: center; color: #f85149; font-size: 1.2em;">&#10007;</td>
+      <td style="padding: 12px 12px; text-align: center; color: #8b949e;">N/A</td>
+      <td style="padding: 12px 12px; text-align: center; color: #8b949e;">N/A</td>
+    </tr>
+
+    <!-- No CUDA on client -->
+    <tr style="border-bottom: 1px solid #21262d; background-color: #0d1117;">
+      <td style="padding: 12px 16px; color: #e6edf3;">&nbsp;&nbsp;&#8627; No CUDA on client</td>
+      <td style="padding: 12px 12px; text-align: center; font-weight: 700; color: #3fb950; font-size: 1.2em;">&#10003;</td>
+      <td style="padding: 12px 12px; text-align: center; font-weight: 700; color: #3fb950; font-size: 1.2em;">&#10003;</td>
+      <td style="padding: 12px 12px; text-align: center; color: #f85149; font-size: 1.2em;">&#10007;</td>
+      <td style="padding: 12px 12px; text-align: center; font-weight: 700; color: #3fb950; font-size: 1.2em;">&#10003;</td>
+      <td style="padding: 12px 12px; text-align: center; color: #f85149; font-size: 1.2em;">&#10007;</td>
+    </tr>
+
+    <!-- No PyTorch on client -->
+    <tr style="border-bottom: 1px solid #21262d; background-color: #0d1117;">
+      <td style="padding: 12px 16px; color: #e6edf3;">&nbsp;&nbsp;&#8627; No PyTorch on client</td>
+      <td style="padding: 12px 12px; text-align: center; font-weight: 700; color: #3fb950; font-size: 1.2em;">&#10003;</td>
+      <td style="padding: 12px 12px; text-align: center; color: #f85149; font-size: 1.2em;">&#10007;</td>
+      <td style="padding: 12px 12px; text-align: center; font-weight: 700; color: #3fb950; font-size: 1.2em;">&#10003;</td>
+      <td style="padding: 12px 12px; text-align: center; font-weight: 700; color: #3fb950; font-size: 1.2em;">&#10003;</td>
+      <td style="padding: 12px 12px; text-align: center; color: #f85149; font-size: 1.2em;">&#10007;</td>
+    </tr>
+
+    <!-- No NumPy on client -->
+    <tr style="border-bottom: 1px solid #21262d; background-color: #0d1117;">
+      <td style="padding: 12px 16px; color: #e6edf3;">&nbsp;&nbsp;&#8627; No NumPy on client</td>
+      <td style="padding: 12px 12px; text-align: center; font-weight: 700; color: #3fb950; font-size: 1.2em;">&#10003;</td>
+      <td style="padding: 12px 12px; text-align: center; color: #f85149; font-size: 1.2em;">&#10007;</td>
+      <td style="padding: 12px 12px; text-align: center; font-weight: 700; color: #3fb950; font-size: 1.2em;">&#10003;</td>
+      <td style="padding: 12px 12px; text-align: center; font-weight: 700; color: #3fb950; font-size: 1.2em;">&#10003;</td>
+      <td style="padding: 12px 12px; text-align: center; color: #f85149; font-size: 1.2em;">&#10007;</td>
+    </tr>
+
+    <!-- Separator -->
+    <tr style="background-color: #161b22; border-bottom: 2px solid #30363d;">
+      <td colspan="6" style="padding: 6px;"></td>
+    </tr>
+
+    <!-- Auto CPU fallback -->
+    <tr style="border-bottom: 1px solid #21262d; background-color: #0d1117;">
+      <td style="padding: 12px 16px; font-weight: 600; color: #e6edf3;">Auto CPU fallback</td>
+      <td style="padding: 12px 12px; text-align: center; font-weight: 700; color: #3fb950; font-size: 1.2em;">&#10003;</td>
+      <td style="padding: 12px 12px; text-align: center; color: #f85149; font-size: 1.2em;">&#10007;</td>
+      <td style="padding: 12px 12px; text-align: center; color: #f85149; font-size: 1.2em;">&#10007;</td>
+      <td style="padding: 12px 12px; text-align: center; color: #8b949e;">N/A</td>
+      <td style="padding: 12px 12px; text-align: center; color: #8b949e;">N/A</td>
+    </tr>
+
+    <!-- Auto-discovery -->
+    <tr style="border-bottom: 1px solid #21262d; background-color: #0d1117;">
+      <td style="padding: 12px 16px; font-weight: 600; color: #e6edf3;">Network auto-discovery</td>
+      <td style="padding: 12px 12px; text-align: center; font-weight: 700; color: #3fb950; font-size: 1.2em;">&#10003;</td>
+      <td style="padding: 12px 12px; text-align: center; color: #f85149; font-size: 1.2em;">&#10007;</td>
+      <td style="padding: 12px 12px; text-align: center; color: #f85149; font-size: 1.2em;">&#10007;</td>
+      <td style="padding: 12px 12px; text-align: center; color: #f85149; font-size: 1.2em;">&#10007;</td>
+      <td style="padding: 12px 12px; text-align: center; color: #f85149; font-size: 1.2em;">&#10007;</td>
+    </tr>
+
+    <!-- One-command server setup -->
+    <tr style="border-bottom: 1px solid #21262d; background-color: #0d1117;">
+      <td style="padding: 12px 16px; font-weight: 600; color: #e6edf3;">One-command server setup</td>
+      <td style="padding: 12px 12px; text-align: center; font-weight: 700; color: #3fb950; font-size: 1.2em;">&#10003;</td>
+      <td style="padding: 12px 12px; text-align: center; font-weight: 700; color: #3fb950; font-size: 1.2em;">&#10003;</td>
+      <td style="padding: 12px 12px; text-align: center; color: #f85149; font-size: 1.2em;">&#10007;</td>
+      <td style="padding: 12px 12px; text-align: center; color: #f85149; font-size: 1.2em;">&#10007;</td>
+      <td style="padding: 12px 12px; text-align: center; color: #f85149; font-size: 1.2em;">&#10007;</td>
+    </tr>
+
+    <!-- Separator -->
+    <tr style="background-color: #161b22; border-bottom: 2px solid #30363d;">
+      <td colspan="6" style="padding: 6px;"></td>
+    </tr>
+
+    <!-- Multi-GPU parallelism -->
+    <tr style="border-bottom: 1px solid #21262d; background-color: #0d1117;">
+      <td style="padding: 12px 16px; font-weight: 600; color: #e6edf3;">Multi-GPU parallelism</td>
+      <td style="padding: 12px 12px; text-align: center; font-weight: 700; color: #3fb950; font-size: 1.2em;">&#10003;</td>
+      <td style="padding: 12px 12px; text-align: center; color: #f85149; font-size: 1.2em;">&#10007;</td>
+      <td style="padding: 12px 12px; text-align: center; color: #f85149; font-size: 1.2em;">&#10007;</td>
+      <td style="padding: 12px 12px; text-align: center; color: #f85149; font-size: 1.2em;">&#10007;</td>
+      <td style="padding: 12px 12px; text-align: center; color: #f85149; font-size: 1.2em;">&#10007;</td>
+    </tr>
+
+    <!-- Load balancing -->
+    <tr style="border-bottom: 1px solid #21262d; background-color: #0d1117;">
+      <td style="padding: 12px 16px; color: #e6edf3;">&nbsp;&nbsp;&#8627; Load balancing</td>
+      <td style="padding: 12px 12px; text-align: center; font-weight: 700; color: #3fb950; font-size: 1.2em;">&#10003;</td>
+      <td style="padding: 12px 12px; text-align: center; color: #f85149; font-size: 1.2em;">&#10007;</td>
+      <td style="padding: 12px 12px; text-align: center; color: #f85149; font-size: 1.2em;">&#10007;</td>
+      <td style="padding: 12px 12px; text-align: center; color: #f85149; font-size: 1.2em;">&#10007;</td>
+      <td style="padding: 12px 12px; text-align: center; color: #f85149; font-size: 1.2em;">&#10007;</td>
+    </tr>
+
+    <!-- Task scheduler -->
+    <tr style="border-bottom: 1px solid #21262d; background-color: #0d1117;">
+      <td style="padding: 12px 16px; font-weight: 600; color: #e6edf3;">Task scheduler</td>
+      <td style="padding: 12px 12px; text-align: center; font-weight: 700; color: #3fb950; font-size: 1.2em;">&#10003;</td>
+      <td style="padding: 12px 12px; text-align: center; color: #f85149; font-size: 1.2em;">&#10007;</td>
+      <td style="padding: 12px 12px; text-align: center; color: #f85149; font-size: 1.2em;">&#10007;</td>
+      <td style="padding: 12px 12px; text-align: center; color: #f85149; font-size: 1.2em;">&#10007;</td>
+      <td style="padding: 12px 12px; text-align: center; color: #f85149; font-size: 1.2em;">&#10007;</td>
+    </tr>
+
+    <!-- Tensor caching -->
+    <tr style="border-bottom: 1px solid #21262d; background-color: #0d1117;">
+      <td style="padding: 12px 16px; font-weight: 600; color: #e6edf3;">Tensor caching</td>
+      <td style="padding: 12px 12px; text-align: center; font-weight: 700; color: #3fb950; font-size: 1.2em;">&#10003;</td>
+      <td style="padding: 12px 12px; text-align: center; color: #f85149; font-size: 1.2em;">&#10007;</td>
+      <td style="padding: 12px 12px; text-align: center; color: #f85149; font-size: 1.2em;">&#10007;</td>
+      <td style="padding: 12px 12px; text-align: center; color: #f85149; font-size: 1.2em;">&#10007;</td>
+      <td style="padding: 12px 12px; text-align: center; color: #f85149; font-size: 1.2em;">&#10007;</td>
+    </tr>
+
+    <!-- Async streaming -->
+    <tr style="border-bottom: 1px solid #21262d; background-color: #0d1117;">
+      <td style="padding: 12px 16px; font-weight: 600; color: #e6edf3;">Async streaming</td>
+      <td style="padding: 12px 12px; text-align: center; font-weight: 700; color: #3fb950; font-size: 1.2em;">&#10003;</td>
+      <td style="padding: 12px 12px; text-align: center; color: #f85149; font-size: 1.2em;">&#10007;</td>
+      <td style="padding: 12px 12px; text-align: center; color: #f85149; font-size: 1.2em;">&#10007;</td>
+      <td style="padding: 12px 12px; text-align: center; color: #f85149; font-size: 1.2em;">&#10007;</td>
+      <td style="padding: 12px 12px; text-align: center; color: #f85149; font-size: 1.2em;">&#10007;</td>
+    </tr>
+
+    <!-- Auto failover -->
+    <tr style="border-bottom: 1px solid #21262d; background-color: #0d1117;">
+      <td style="padding: 12px 16px; font-weight: 600; color: #e6edf3;">Auto failover</td>
+      <td style="padding: 12px 12px; text-align: center; font-weight: 700; color: #3fb950; font-size: 1.2em;">&#10003;</td>
+      <td style="padding: 12px 12px; text-align: center; color: #f85149; font-size: 1.2em;">&#10007;</td>
+      <td style="padding: 12px 12px; text-align: center; color: #f85149; font-size: 1.2em;">&#10007;</td>
+      <td style="padding: 12px 12px; text-align: center; color: #f85149; font-size: 1.2em;">&#10007;</td>
+      <td style="padding: 12px 12px; text-align: center; color: #f85149; font-size: 1.2em;">&#10007;</td>
+    </tr>
+
+    <!-- Separator -->
+    <tr style="background-color: #161b22; border-bottom: 2px solid #30363d;">
+      <td colspan="6" style="padding: 6px;"></td>
+    </tr>
+
+    <!-- Open source -->
+    <tr style="border-bottom: 1px solid #21262d; background-color: #0d1117;">
+      <td style="padding: 12px 16px; font-weight: 600; color: #e6edf3;">Open source</td>
+      <td style="padding: 12px 12px; text-align: center; color: #3fb950;">MIT</td>
+      <td style="padding: 12px 12px; text-align: center; color: #3fb950;">MIT</td>
+      <td style="padding: 12px 12px; text-align: center; color: #3fb950;">MIT</td>
+      <td style="padding: 12px 12px; text-align: center; color: #3fb950;">&#10003;</td>
+      <td style="padding: 12px 12px; text-align: center; color: #f85149; font-size: 1.2em;">&#10007;</td>
+    </tr>
+
+    <!-- pip install -->
+    <tr style="border-bottom: 1px solid #21262d; background-color: #0d1117;">
+      <td style="padding: 12px 16px; font-weight: 600; color: #e6edf3;">pip install</td>
+      <td style="padding: 12px 12px; text-align: center; font-weight: 700; color: #3fb950; font-size: 1.2em;">&#10003;</td>
+      <td style="padding: 12px 12px; text-align: center; font-weight: 700; color: #3fb950; font-size: 1.2em;">&#10003;</td>
+      <td style="padding: 12px 12px; text-align: center; color: #f85149; font-size: 1.2em;">&#10007;</td>
+      <td style="padding: 12px 12px; text-align: center; color: #8b949e;">N/A</td>
+      <td style="padding: 12px 12px; text-align: center; color: #8b949e;">N/A</td>
+    </tr>
+
+    <!-- Windows support -->
+    <tr style="border-bottom: 1px solid #21262d; background-color: #0d1117;">
+      <td style="padding: 12px 16px; font-weight: 600; color: #e6edf3;">Windows support</td>
+      <td style="padding: 12px 12px; text-align: center; font-weight: 700; color: #3fb950; font-size: 1.2em;">&#10003;</td>
+      <td style="padding: 12px 12px; text-align: center; font-weight: 700; color: #3fb950; font-size: 1.2em;">&#10003;</td>
+      <td style="padding: 12px 12px; text-align: center; font-weight: 700; color: #3fb950; font-size: 1.2em;">&#10003;</td>
+      <td style="padding: 12px 12px; text-align: center; color: #f85149; font-size: 1.2em;">&#10007;</td>
+      <td style="padding: 12px 12px; text-align: center; color: #f85149; font-size: 1.2em;">&#10007;</td>
+    </tr>
+
+    <!-- JSON protocol -->
+    <tr style="border-bottom: 1px solid #21262d; background-color: #0d1117;">
+      <td style="padding: 12px 16px; font-weight: 600; color: #e6edf3;">JSON protocol (no pickle)</td>
+      <td style="padding: 12px 12px; text-align: center; font-weight: 700; color: #3fb950; font-size: 1.2em;">&#10003;</td>
+      <td style="padding: 12px 12px; text-align: center; color: #d2991d;">uses pickle</td>
+      <td style="padding: 12px 12px; text-align: center; color: #8b949e;">N/A</td>
+      <td style="padding: 12px 12px; text-align: center; color: #8b949e;">N/A</td>
+      <td style="padding: 12px 12px; text-align: center; color: #8b949e;">N/A</td>
+    </tr>
+
+  </tbody>
+</table>
+
+<div style="margin-top: 16px; padding: 14px 20px; background-color: #0d1117; border-left: 4px solid #3fb950; border-radius: 0 8px 8px 0; color: #c9d1d9; font-size: 0.9em;">
+  <strong style="color: #3fb950;">Key:</strong> 
+  <span style="color: #3fb950; font-weight: 600;">&#10003;</span> = Supported &nbsp;|&nbsp; 
+  <span style="color: #f85149;">&#10007;</span> = Not supported &nbsp;|&nbsp; 
+  <span style="color: #8b949e;">N/A</span> = Not applicable &nbsp;|&nbsp; 
+  <span style="color: #d2991d;">text</span> = Partial/with caveats
+</div>
