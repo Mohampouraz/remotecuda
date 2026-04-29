@@ -43,7 +43,7 @@ You just want to run `python train.py` | Without learning distributed systems
 **On GPU machine (just two commands):**
 ```bash
 pip install remotecuda[server]
-remotecuda start
+remotecuda start```
 
 
 
