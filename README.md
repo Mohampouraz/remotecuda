@@ -1,221 +1,123 @@
-<!-- ============================================================ -->
-<!--     RemoteCUDA — Capabilities & Usage Guide                -->
-<!--     Professional Bilingual Documentation                    -->
-<!-- ============================================================ -->
+# RemoteCUDA v3.0
 
 <div align="center">
 
-# RemoteCUDA
+### Remote GPU Access — Zero Client Dependencies — Auto CPU Fallback
 
-### Remote GPU. Zero Code Changes.
-### GPU راه دور. بدون تغییر حتی یک خط کد.
-
----
-
-[![PyPI](https://img.shields.io/badge/pypi-v2.0.0-blue?style=flat-square&logo=pypi&logoColor=white)](https://pypi.org/project/remotecuda/)
+[![PyPI](https://img.shields.io/badge/pypi-v3.0.0-blue?style=flat-square&logo=pypi&logoColor=white)](https://pypi.org/project/remotecuda/)
 [![Python](https://img.shields.io/badge/python-3.8+-blue?style=flat-square&logo=python&logoColor=white)](https://www.python.org/)
-[![License](https://img.shields.io/badge/license-MIT-green?style=flat-square)](https://github.com/remotecuda/remotecuda/blob/main/LICENSE)
-[![Downloads](https://img.shields.io/pypi/dm/remotecuda?style=flat-square&color=blue)](https://pypi.org/project/remotecuda/)
+[![License](https://img.shields.io/badge/license-MIT-green?style=flat-square)](LICENSE)
 
 </div>
 
 ---
 
-<br>
+## What is RemoteCUDA?
 
-# Table of Contents | فهرست مطالب
+RemoteCUDA enables transparent remote GPU access over a local network with **zero client-side dependencies**. The client uses only Python standard library — no NumPy, no PyTorch, no CUDA, no external packages whatsoever.
 
-| # | Section |
-|:--|:--|
-| 1 | [Distinctive Capabilities](#1-distinctive-capabilities) |
-| 2 | [Comparative Advantage](#2-comparative-advantage) |
-| 3 | [Architecture at a Glance](#3-architecture-at-a-glance) |
-| 4 | [Usage — Step by Step](#4-usage--step-by-step) |
-| 5 | [Performance Benchmarks](#5-performance-benchmarks) |
-| 6 | [قابلیت‌های متمایز](#6-قابلیتهای-متمایز) |
-| 7 | [مزیت رقابتی](#7-مزیت-رقابتی) |
-| 8 | [نحوه استفاده — گام به گام](#8-نحوه-استفاده--گام-به-گام) |
+The server automatically detects GPU availability and falls back to CPU if no GPU is present. This means you can start computing immediately, with or without a GPU.
 
 ---
 
-<br>
-<br>
-
-# 1. Distinctive Capabilities
-
-RemoteCUDA is not merely another remote GPU tool — it is a complete distributed execution framework that operates transparently beneath your existing PyTorch codebase.
-
-## Capability Matrix
-
-| Capability | Description | Impact |
-|:--|:--|:--|
-| **Zero-Change Integration** | No import rewrites, no decorators, no context managers required. Your `model.cuda()` calls work exactly as written. | Eliminates migration cost entirely. |
-| **Network Auto-Discovery** | UDP multicast-based server detection. Clients locate GPU servers without IP addresses, configuration files, or environment variables. | Zero-configuration deployment. |
-| **Multi-GPU Scheduling** | Four distinct scheduling strategies — Adaptive, Load-Balancing, Memory-Aware, Latency-Optimized — with automatic strategy switching based on workload profiling. | Optimal resource utilization without manual tuning. |
-| **Local Dataset Retention** | Datasets remain on the client filesystem. Only the active mini-batch traverses the network. A 512MB LRU/LFU tensor cache eliminates redundant transfers. | 50GB dataset → zero upfront transfer. |
-| **Asynchronous Stream Pipelining** | Data transfer and GPU computation overlap via CUDA stream semantics. While batch N computes on the GPU, batch N+1 is already in flight over the network. | Hides network latency behind computation. |
-| **Automatic Failover** | GPU health monitored via heartbeat protocol. Failed tasks automatically reassigned to healthy GPUs with configurable retry logic (default: 3 attempts). | Graceful degradation under hardware failure. |
-| **Heterogeneous GPU Support** | Mixed GPU architectures (RTX 4090 + A100 + RTX 3090) within a single pool. Scheduler accounts for compute capability, memory capacity, and current utilization. | Leverage all available hardware simultaneously. |
-| **No CUDA on Client** | Client requires only PyTorch CPU build. No NVIDIA drivers, no CUDA toolkit, no GPU hardware. | Works on any laptop, including ultrabooks. |
-
-## Scheduling Strategies
-┌─────────────────────────────────────────────────────────────────────────────┐
-│ GPU Scheduler — Strategy Selection │
-├───────────────────┬─────────────────────────────────────────────────────────┤
-│ Strategy │ Behavior │
-├───────────────────┼─────────────────────────────────────────────────────────┤
-│ Adaptive │ Profiles each task; routes memory-heavy ops to GPUs │
-│ (default) │ with most free VRAM, latency-sensitive ops to GPUs │
-│ │ with lowest historical response time. │
-├───────────────────┼─────────────────────────────────────────────────────────┤
-│ Load-Balancing │ Distributes tasks evenly across all available GPUs. │
-│ │ Optimal for homogeneous clusters running uniform │
-│ │ workloads (e.g., hyperparameter sweeps). │
-├───────────────────┼─────────────────────────────────────────────────────────┤
-│ Memory-Aware │ Routes each task to the GPU with the most free memory. │
-│ │ Essential for large models (LLMs, diffusion models) │
-│ │ where VRAM is the primary constraint. │
-├───────────────────┼─────────────────────────────────────────────────────────┤
-│ Latency-Optimized │ Routes to GPUs with lowest historical average │
-│ │ forward-pass time. Ideal for real-time inference │
-│ │ serving where tail latency matters. │
-└───────────────────┴─────────────────────────────────────────────────────────┘
-
+## Architecture
 
 ---
 
-<br>
-<br>
-
-# 2. Comparative Advantage
-
-RemoteCUDA occupies a unique position in the design space. Unlike SSH-based approaches (which require code relocation) and unlike simpler CUDA-forwarding tools (which lack intelligence), RemoteCUDA provides transparent interception combined with sophisticated resource management.
-
-## Feature-by-Feature Comparison
-
-| Feature | RemoteCUDA | SSH + SCP | VSCode Remote | Chidori GPU | Tensorlink |
-|:--|:--:|:--:|:--:|:--:|:--:|
-| Zero code changes | **Yes** | No | No | Yes | Yes |
-| Local dataset access | **Yes** | No | No | Yes | Yes |
-| Network auto-discovery | **Yes** | No | No | No | No |
-| Single-command server setup | **Yes** | No | No | Yes | No |
-| Multi-GPU parallelism | **Yes** | No | No | No | No |
-| Intelligent load balancing | **Yes** | No | No | No | No |
-| Automatic failover | **Yes** | No | No | No | No |
-| Multiple scheduling strategies | **Yes (4)** | No | No | No | No |
-| Tensor caching layer | **Yes** | No | No | No | No |
-| Async stream pipelining | **Yes** | No | No | No | No |
-| Heterogeneous GPU support | **Yes** | No | No | No | No |
-| No CUDA on client | **Yes** | Yes | No | Yes | Yes |
-| pip installable | **Yes** | N/A | N/A | Yes | No |
-| Windows support | **Yes** | No | No | Yes | Yes |
-| Open source (MIT) | **Yes** | N/A | No | Yes | Yes |
-## Positioning
+┌─────────────────────────────┐ ┌──────────────────────────────┐
+│ CLIENT │ │ SERVER │
+│ │ │ │
+│ Python 3.8+ stdlib ONLY │ JSON │ PyTorch 1.10+ │
+│ - socket (TCP) │◄────────────►│ NumPy 1.20+ │
+│ - json │ over TCP │ │
+│ - struct (binary packing) │ │ Auto-detection: │
+│ - base64 (data encoding) │ │ CUDA available → GPU │
+│ - threading │ │ CUDA unavailable → CPU │
+│ │ │ │
+│ ZERO dependencies │ │ Discovery: UDP Multicast │
+│ No NumPy, No PyTorch │ │ Protocol: JSON + Binary │
+│ No CUDA, No anything │ │ │
+└─────────────────────────────┘ └──────────────────────────────┘
 
 
 
-Intelligence / Automation
-▲
-│
-│ ┌──────────────┐
-│ │ RemoteCUDA │ ← Transparent + Smart
-│ └──────────────┘
-│
-│ ┌──────────────┐
-│ │ Chidori GPU │ ← Transparent only
-│ └──────────────┘
-│
-│ ┌──────────────┐
-│ │ VSCode │ ← Manual + Remote
-│ │ Remote │
-│ └──────────────┘
-│
-│ ┌──────────────┐
-│ │ SSH + SCP │ ← Manual + Relocation
-│ └──────────────┘
-│
-└──────────────────────────────►
+## Quick Start
 
-
-
-
-RemoteCUDA is the only solution that combines **zero code impact** (transparent CUDA interception) with **intelligent resource orchestration** (scheduling, caching, failover, pipelining).
-
----
-
-<br>
-<br>
-
-# 3. Architecture at a Glance
-┌──────────────────────────────────────────────────────────────────────────────┐
-│ CLIENT MACHINE (No GPU) │
-│ │
-│ Your Code RemoteCUDA Stack │
-│ ┌──────────┐ ┌─────────────────────────────────────────────────────┐ │
-│ │model.cuda()──→│ AutoCUDAHook → GPUScheduler → GPUPool │ │
-│ │tensor.to() │ │ (intercept) (strategy) (connections) │ │
-│ │loss.back() │ └─────────────────────────────────────────────────────┘ │
-│ └──────────┘ ┌─────────────────────────────────────────────────────┐ │
-│ │ TensorCache │ StreamManager │ TensorBridge │ │
-│ │ (512MB LRU) │ (async pipes) │ (lifecycle) │ │
-│ └─────────────────────────────────────────────────────┘ │
-│ │
-└────────────────────────────────────┬──────────────────────────────────────────┘
-│
-│ TCP/IP (1–10 Gbps Ethernet)
-│ Protocol: Binary, zlib/lz4 compressed
-│ Discovery: UDP Multicast (239.255.100.100)
-│
-┌──────────────────────────┼──────────────────────────┐
-│ │ │
-▼ ▼ ▼
-┌──────────────────┐ ┌──────────────────┐ ┌──────────────────┐
-│ GPU Server 1 │ │ GPU Server 2 │ │ GPU Server N │
-│ │ │ │ │ │
-│ ┌────────────┐ │ │ ┌────────────┐ │ │ ┌────────────┐ │
-│ │ GPUWorker 0│ │ │ │ GPUWorker 0│ │ │ │ GPUWorker 0│ │
-│ │ (RTX 4090) │ │ │ │ (RTX 3090) │ │ │ │ (A100) │ │
-│ ├────────────┤ │ │ ├────────────┤ │ │ ├────────────┤ │
-│ │ GPUWorker 1│ │ │ │ GPUWorker 1│ │ │ │ GPUWorker 1│ │
-│ │ (RTX 4090) │ │ │ │ (RTX 3090) │ │ │ │ (A100) │ │
-│ └────────────┘ │ │ └────────────┘ │ │ └────────────┘ │
-│ │ │ │ │ │
-│ Discovery: ON │ │ Discovery: ON │ │ Discovery: ON │
-└──────────────────┘ └──────────────────┘ └──────────────────┘
-
-
-
-
-**Key Design Decisions:**
-
-- **One Worker per GPU:** Each physical GPU gets its own worker thread, memory manager, and CUDA stream. No cross-GPU contention.
-- **Binary Protocol:** Custom 16-byte header with CRC32 integrity check. Payload compressed with zlib (level 3) by default; supports lz4 and zstd as optional accelerators.
-- **UDP Discovery:** Servers announce presence via multicast; clients listen passively. No central registry. Servers can join or leave dynamically.
-
----
-
-<br>
-<br>
-
-# 4. Usage — Step by Step
-
-## 4.1 Server Setup (GPU Machine)
-
-**Prerequisites:** Python 3.8+, PyTorch with CUDA, NVIDIA drivers.
+### Server (GPU Machine)
 
 ```bash
-# Install
-pip install remotecuda
-
-# Start the service
+pip install remotecuda[server]
 remotecuda start
 
 
 
- RemoteCUDA GPU Service
- GPU:        NVIDIA GeForce RTX 4090 (24.0 GB)
- Port:       55555
- Status:     Ready — Broadcasting on network
- Discovery:  ON (UDP multicast)
+pip install remotecuda
+python
 
- GPU is now available on the network.
+
+
+import remotecuda
+
+# Connect to server (auto-discover or specify IP)
+remotecuda.init()
+
+# Create tensors on remote device
+a = remotecuda.zeros((1000, 1000))
+b = remotecuda.ones((1000, 1000))
+
+# Compute on remote device
+c = remotecuda.matmul(a, b)
+
+# Get results back
+result = remotecuda.get(c)
+print(f"Shape: {result['shape']}, First value: {result['data'][0]}")
+
+# Cleanup
+remotecuda.free(a)
+remotecuda.free(b)
+remotecuda.free(c)
+remotecuda.shutdown()
+
+
+
+Features
+Feature	Description
+Zero Client Dependencies	Pure Python stdlib — socket, json, struct, base64
+Auto GPU/CPU Fallback	Server auto-detects CUDA, falls back to CPU
+Network Auto-Discovery	UDP multicast, no IP configuration needed
+JSON Protocol	Human-readable, secure, no pickle
+Base64 Tensor Encoding	Compatible with any language
+50+ Tensor Operations	Full math, activation, reduction, shape ops
+Multi-Client Support	Thread pool on server, multiple clients simultaneously
+Graceful Shutdown	Resource cleanup, tensor freeing
+Comprehensive Error Handling	Clear error messages, proper exception types
+
+
+Server Requirements
+Requirement	Needed?
+Python 3.8+	Yes
+PyTorch 1.10+	Yes
+NumPy 1.20+	Yes
+NVIDIA Driver	Optional (auto-fallback)
+CUDA Toolkit	No
+
+
+
+Client Requirements
+Requirement	Needed?
+Python 3.8+	Yes
+Anything else	No
+
+
+Comparison
+Feature	RemoteCUDA v3	SSH+SCP	VSCode Remote	Previous RemoteCUDA
+Zero client deps	Yes	Yes	No	No
+Auto CPU fallback	Yes	No	No	No
+Pure Python client	Yes	N/A	N/A	No
+No NumPy on client	Yes	N/A	N/A	No
+No PyTorch on client	Yes	N/A	N/A	No
+Auto-discovery	Yes	No	No	Yes
+Multi-GPU	Yes	No	No	Yes
+
+
+
