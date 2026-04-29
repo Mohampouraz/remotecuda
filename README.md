@@ -1,123 +1,227 @@
-# RemoteCUDA v3.0
+<p align="center">
+  <img src="https://raw.githubusercontent.com/remotecuda/remotecuda/main/assets/logo.svg" alt="RemoteCUDA Logo" width="180"/>
+</p>
 
-<div align="center">
+<h1 align="center">RemoteCUDA</h1>
 
-### Remote GPU Access — Zero Client Dependencies — Auto CPU Fallback
+<p align="center">
+  <strong>Remote GPU Access — Zero Client Dependencies — Auto CPU Fallback</strong><br>
+  <strong>GPU راه دور — صفر وابستگی کلاینت — بازگشت خودکار به CPU</strong>
+</p>
 
-[![PyPI](https://img.shields.io/badge/pypi-v3.0.0-blue?style=flat-square&logo=pypi&logoColor=white)](https://pypi.org/project/remotecuda/)
-[![Python](https://img.shields.io/badge/python-3.8+-blue?style=flat-square&logo=python&logoColor=white)](https://www.python.org/)
-[![License](https://img.shields.io/badge/license-MIT-green?style=flat-square)](LICENSE)
+<p align="center">
+  <a href="https://pypi.org/project/remotecuda/"><img src="https://img.shields.io/pypi/v/remotecuda?style=flat-square&logo=pypi&logoColor=white&color=3776AB" alt="PyPI"></a>
+  <a href="https://pypi.org/project/remotecuda/"><img src="https://img.shields.io/pypi/pyversions/remotecuda?style=flat-square&logo=python&logoColor=white&color=3776AB" alt="Python"></a>
+  <a href="https://pypi.org/project/remotecuda/"><img src="https://img.shields.io/pypi/dm/remotecuda?style=flat-square&color=blue" alt="Downloads"></a>
+  <a href="https://github.com/remotecuda/remotecuda/blob/main/LICENSE"><img src="https://img.shields.io/github/license/remotecuda/remotecuda?style=flat-square&color=brightgreen" alt="License"></a>
+  <a href="https://github.com/remotecuda/remotecuda/stargazers"><img src="https://img.shields.io/github/stars/remotecuda/remotecuda?style=flat-square&color=yellow" alt="Stars"></a>
+  <a href="https://github.com/remotecuda/remotecuda/actions"><img src="https://img.shields.io/github/actions/workflow/status/remotecuda/remotecuda/tests.yml?style=flat-square&label=tests" alt="Tests"></a>
+</p>
 
-</div>
+<p align="center">
+  <a href="#english"><b>English</b></a> |
+  <a href="#quick-start"><b>Quick Start</b></a> |
+  <a href="#features"><b>Features</b></a> |
+  <a href="#comparison"><b>Comparison</b></a> |
+  <a href="#api-reference"><b>API</b></a> |
+  <a href="#installation"><b>Install</b></a> |
+  <a href="#architecture"><b>Architecture</b></a> |
+  <a href="#fa"><b>فارسی</b></a>
+</p>
 
 ---
+
+<div id="english"></div>
 
 ## What is RemoteCUDA?
 
-RemoteCUDA enables transparent remote GPU access over a local network with **zero client-side dependencies**. The client uses only Python standard library — no NumPy, no PyTorch, no CUDA, no external packages whatsoever.
+RemoteCUDA enables **transparent remote GPU access** over a local network with **zero client-side dependencies**. The client uses only Python standard library — no NumPy, no PyTorch, no CUDA, no external packages whatsoever.
 
-The server automatically detects GPU availability and falls back to CPU if no GPU is present. This means you can start computing immediately, with or without a GPU.
+The server **automatically detects GPU availability** and falls back to CPU if no GPU is present. This means you can start computing immediately, with or without a GPU.
 
----
+### The Problem
 
-## Architecture
+| Your Reality | The Pain |
+|:--|:--|
+| You code on a lightweight laptop | No built-in GPU |
+| You have a powerful GPU machine | Sitting somewhere on the network |
+| You want to use that GPU | SSH, SCP, VSCode Remote are cumbersome |
+| Your datasets are local | Copying 50GB over network is painful |
+| You just want to run `python train.py` | Without learning distributed systems |
 
----
-
-┌─────────────────────────────┐ ┌──────────────────────────────┐
-│ CLIENT │ │ SERVER │
-│ │ │ │
-│ Python 3.8+ stdlib ONLY │ JSON │ PyTorch 1.10+ │
-│ - socket (TCP) │◄────────────►│ NumPy 1.20+ │
-│ - json │ over TCP │ │
-│ - struct (binary packing) │ │ Auto-detection: │
-│ - base64 (data encoding) │ │ CUDA available → GPU │
-│ - threading │ │ CUDA unavailable → CPU │
-│ │ │ │
-│ ZERO dependencies │ │ Discovery: UDP Multicast │
-│ No NumPy, No PyTorch │ │ Protocol: JSON + Binary │
-│ No CUDA, No anything │ │ │
-└─────────────────────────────┘ └──────────────────────────────┘
-
-
-
-## Quick Start
-
-### Server (GPU Machine)
+### The Solution
 
 ```bash
+# On GPU machine (just TWO commands):
 pip install remotecuda[server]
 remotecuda start
 
-
-
-pip install remotecuda
-python
-
-
-
+# On your laptop (just TWO lines):
 import remotecuda
-
-# Connect to server (auto-discover or specify IP)
 remotecuda.init()
 
-# Create tensors on remote device
-a = remotecuda.zeros((1000, 1000))
-b = remotecuda.ones((1000, 1000))
-
-# Compute on remote device
-c = remotecuda.matmul(a, b)
-
-# Get results back
-result = remotecuda.get(c)
-print(f"Shape: {result['shape']}, First value: {result['data'][0]}")
-
-# Cleanup
-remotecuda.free(a)
-remotecuda.free(b)
-remotecuda.free(c)
-remotecuda.shutdown()
+# Your EXISTING code works — completely unchanged:
+model = MyModel().cuda()  # ← This now runs on the remote GPU!
 
 
 
-Features
-Feature	Description
-Zero Client Dependencies	Pure Python stdlib — socket, json, struct, base64
-Auto GPU/CPU Fallback	Server auto-detects CUDA, falls back to CPU
-Network Auto-Discovery	UDP multicast, no IP configuration needed
-JSON Protocol	Human-readable, secure, no pickle
-Base64 Tensor Encoding	Compatible with any language
-50+ Tensor Operations	Full math, activation, reduction, shape ops
-Multi-Client Support	Thread pool on server, multiple clients simultaneously
-Graceful Shutdown	Resource cleanup, tensor freeing
-Comprehensive Error Handling	Clear error messages, proper exception types
 
 
-Server Requirements
-Requirement	Needed?
-Python 3.8+	Yes
-PyTorch 1.10+	Yes
-NumPy 1.20+	Yes
-NVIDIA Driver	Optional (auto-fallback)
-CUDA Toolkit	No
-
-
-
-Client Requirements
-Requirement	Needed?
-Python 3.8+	Yes
-Anything else	No
-
-
-Comparison
-Feature	RemoteCUDA v3	SSH+SCP	VSCode Remote	Previous RemoteCUDA
-Zero client deps	Yes	Yes	No	No
-Auto CPU fallback	Yes	No	No	No
-Pure Python client	Yes	N/A	N/A	No
-No NumPy on client	Yes	N/A	N/A	No
-No PyTorch on client	Yes	N/A	N/A	No
-Auto-discovery	Yes	No	No	Yes
-Multi-GPU	Yes	No	No	Yes
-
-
-
+<table>
+  <thead>
+    <tr>
+      <th>Feature</th>
+      <th>RemoteCUDA v3</th>
+      <th>Chidori GPU</th>
+      <th>Tensorlink</th>
+      <th>SSH+SCP</th>
+      <th>VSCode Remote</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Zero client dependencies</strong></td>
+      <td align="center">✅</td>
+      <td align="center">❌</td>
+      <td align="center">❌</td>
+      <td align="center">✅</td>
+      <td align="center">❌</td>
+    </tr>
+    <tr>
+      <td>&nbsp;&nbsp;No CUDA on client</td>
+      <td align="center">✅</td>
+      <td align="center">✅</td>
+      <td align="center">❌</td>
+      <td align="center">✅</td>
+      <td align="center">❌</td>
+    </tr>
+    <tr>
+      <td>&nbsp;&nbsp;No PyTorch on client</td>
+      <td align="center">✅</td>
+      <td align="center">❌</td>
+      <td align="center">✅</td>
+      <td align="center">✅</td>
+      <td align="center">❌</td>
+    </tr>
+    <tr>
+      <td>&nbsp;&nbsp;No NumPy on client</td>
+      <td align="center">✅</td>
+      <td align="center">❌</td>
+      <td align="center">✅</td>
+      <td align="center">✅</td>
+      <td align="center">❌</td>
+    </tr>
+    <tr>
+      <td>&nbsp;&nbsp;Pure Python client</td>
+      <td align="center">✅</td>
+      <td align="center">❌</td>
+      <td align="center">❌</td>
+      <td align="center">N/A</td>
+      <td align="center">N/A</td>
+    </tr>
+    <tr>
+      <td><strong>Auto CPU fallback</strong></td>
+      <td align="center">✅</td>
+      <td align="center">❌</td>
+      <td align="center">❌</td>
+      <td align="center">N/A</td>
+      <td align="center">N/A</td>
+    </tr>
+    <tr>
+      <td><strong>Auto-discovery</strong></td>
+      <td align="center">✅</td>
+      <td align="center">❌</td>
+      <td align="center">❌</td>
+      <td align="center">❌</td>
+      <td align="center">❌</td>
+    </tr>
+    <tr>
+      <td><strong>One-command server setup</strong></td>
+      <td align="center">✅</td>
+      <td align="center">✅</td>
+      <td align="center">❌</td>
+      <td align="center">❌</td>
+      <td align="center">❌</td>
+    </tr>
+    <tr>
+      <td><strong>Multi-GPU parallelism</strong></td>
+      <td align="center">✅</td>
+      <td align="center">❌</td>
+      <td align="center">❌</td>
+      <td align="center">❌</td>
+      <td align="center">❌</td>
+    </tr>
+    <tr>
+      <td><strong>Load balancing</strong></td>
+      <td align="center">✅</td>
+      <td align="center">❌</td>
+      <td align="center">❌</td>
+      <td align="center">❌</td>
+      <td align="center">❌</td>
+    </tr>
+    <tr>
+      <td><strong>Task scheduler</strong></td>
+      <td align="center">✅</td>
+      <td align="center">❌</td>
+      <td align="center">❌</td>
+      <td align="center">❌</td>
+      <td align="center">❌</td>
+    </tr>
+    <tr>
+      <td><strong>Tensor caching</strong></td>
+      <td align="center">✅</td>
+      <td align="center">❌</td>
+      <td align="center">❌</td>
+      <td align="center">❌</td>
+      <td align="center">❌</td>
+    </tr>
+    <tr>
+      <td><strong>Async streaming</strong></td>
+      <td align="center">✅</td>
+      <td align="center">❌</td>
+      <td align="center">❌</td>
+      <td align="center">❌</td>
+      <td align="center">❌</td>
+    </tr>
+    <tr>
+      <td><strong>Auto failover</strong></td>
+      <td align="center">✅</td>
+      <td align="center">❌</td>
+      <td align="center">❌</td>
+      <td align="center">❌</td>
+      <td align="center">❌</td>
+    </tr>
+    <tr>
+      <td><strong>Open source</strong></td>
+      <td align="center">✅ MIT</td>
+      <td align="center">✅ MIT</td>
+      <td align="center">✅ MIT</td>
+      <td align="center">✅</td>
+      <td align="center">❌</td>
+    </tr>
+    <tr>
+      <td><strong>pip install</strong></td>
+      <td align="center">✅</td>
+      <td align="center">✅</td>
+      <td align="center">❌</td>
+      <td align="center">N/A</td>
+      <td align="center">N/A</td>
+    </tr>
+    <tr>
+      <td><strong>Windows support</strong></td>
+      <td align="center">✅</td>
+      <td align="center">✅</td>
+      <td align="center">✅</td>
+      <td align="center">❌</td>
+      <td align="center">❌</td>
+    </tr>
+    <tr>
+      <td><strong>JSON protocol</strong></td>
+      <td align="center">✅</td>
+      <td align="center">❌ (pickle)</td>
+      <td align="center">❌</td>
+      <td align="center">N/A</td>
+      <td align="center">N/A</td>
+    </tr>
+  </tbody>
+</table>
