@@ -1,0 +1,38 @@
+# ============================================================
+#  RemoteCUDA v3.0 — Source Distribution Manifest
+# ============================================================
+
+# Core package — all Python modules
+recursive-include remotecuda *.py
+
+# Documentation
+include README.md
+include LICENSE
+include requirements.txt
+include setup.py
+include setup.cfg
+include pyproject.toml
+
+# Assets (if any)
+recursive-include assets *
+
+# Examples
+recursive-include examples *.py
+recursive-include examples *.ipynb
+recursive-include examples *.sh
+
+# Tests
+recursive-include tests *.py
+recursive-include tests *.json
+recursive-include tests *.yaml
+
+# Exclude build artifacts and caches
+global-exclude __pycache__
+global-exclude *.pyc
+global-exclude *.pyo
+global-exclude .DS_Store
+global-exclude *.egg-info
+prune .git
+prune .github
+prune build
+prune dist

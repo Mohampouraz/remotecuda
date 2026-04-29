@@ -1,0 +1,20 @@
+# ============================================================
+#  RemoteCUDA v3.0 — Ultimate Zero-Dependency Requirements
+# ============================================================
+#
+#  SERVER (GPU Machine):
+#    pip install remotecuda[server]
+#    Needs: PyTorch (with CUDA preferred, CPU fallback auto)
+#
+#  CLIENT (Any Machine):
+#    pip install remotecuda
+#    Needs: NOTHING. Pure Python. No NumPy. No PyTorch. No CUDA.
+#
+# ============================================================
+
+# No base requirements. Pure Python only.
+
+# Server extras (install on GPU machine):
+# pip install remotecuda[server]
+# torch>=1.10.0
+# numpy>=1.20.0
